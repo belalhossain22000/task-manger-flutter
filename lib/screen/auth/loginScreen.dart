@@ -86,7 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 /// Login Button
                 GestureDetector(
                   onTap: () {
-                    // TODO: login logic
+                   Navigator.pushNamed(context, '/home');
                   },
                   child: Container(
                     width: double.infinity,

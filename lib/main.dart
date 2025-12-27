@@ -4,7 +4,10 @@ import 'package:task_manager/screen/auth/loginScreen.dart';
 import 'package:task_manager/screen/auth/registration.dart';
 import 'package:task_manager/screen/auth/resetPasswordScreen.dart';
 import 'package:task_manager/screen/auth/verifyOtpScreen.dart';
+import 'package:task_manager/screen/home/homeScreen.dart';
 import 'package:task_manager/screen/onboarding/splashScreen.dart';
+import 'package:task_manager/screen/profile/edit_profile_screen.dart';
+import 'package:task_manager/screen/profile/profile_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -26,7 +29,10 @@ class MyApp extends StatelessWidget {
         '/registration': (context) => RegistrationScreen(),
         '/forgottenPassword': (context) => ForgottenPassowrdScreen(),
         '/verifyOtp': (context) => VerifyOtpScreen(),
-        '/resetPassword': (context) => ResetPasswordScreen(),
+        '/changePassword': (context) => ResetPasswordScreen(),
+        '/home': (context) => HomeScreen(),
+        '/profile': (context) => ProfileScreen(),
+        '/editProfile': (context) => EditProfileScreen(),
       },
     );
   }

@@ -111,6 +111,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 GestureDetector(
                   onTap: () {
                     // TODO: registration logic
+                     Navigator.pushNamed(context, '/login');
                   },
                   child: Container(
                     width: double.infinity,
