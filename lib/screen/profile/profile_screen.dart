@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_manager/core/storage/token_storage.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -85,7 +86,8 @@ class ProfileScreen extends StatelessWidget {
                 title: "Logout",
                 isDestructive: true,
                 onTap: () {
-                  // TODO: logout logic
+                  Navigator.pushNamed(context, '/login');
+                  TokenStorage.clear();
                 },
               ),
             ],

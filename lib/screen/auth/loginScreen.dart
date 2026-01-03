@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:task_manager/core/storage/token_storage.dart';
+import 'package:task_manager/features/auth/data/auth_api.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -12,6 +14,36 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController passwordController = TextEditingController();
 
   bool _isPasswordVisible = false;
+  bool _isLoading = false;
+
+  Future<void> onLogin() async {
+    if (_isLoading) return;
+
+    setState(() => _isLoading = true);
+
+    try {
+      final response = await AuthApi.login(
+        emailController.text.trim(),
+        passwordController.text.trim(),
+      );
+
+      // ✅ match backend response
+      final token = response["data"]["token"];
+
+      await TokenStorage.saveToken(token);
+
+      if (!mounted) return;
+
+      Navigator.pushReplacementNamed(context, '/home');
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,11 +66,9 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 const SizedBox(height: 80),
 
-                /// Logo
                 const Icon(Icons.task_alt, size: 90, color: Colors.white),
                 const SizedBox(height: 16),
 
-                /// Title
                 const Text(
                   "Welcome Back",
                   textAlign: TextAlign.center,
@@ -57,12 +87,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 const SizedBox(height: 50),
 
-                /// Email
                 _buildEmailField(),
-
                 const SizedBox(height: 16),
-
-                /// Password (with eye toggle)
                 _buildPasswordField(),
 
                 Align(
@@ -81,13 +107,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
 
-                // const SizedBox(height: 30),
+                const SizedBox(height: 10),
 
-                /// Login Button
+                /// LOGIN BUTTON
                 GestureDetector(
-                  onTap: () {
-                   Navigator.pushNamed(context, '/home');
-                  },
+                  onTap: onLogin,
                   child: Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 16),
@@ -97,23 +121,31 @@ class _LoginScreenState extends State<LoginScreen> {
                         colors: [Color(0xFF0A1D37), Color(0xFF102A43)],
                       ),
                     ),
-                    child: const Center(
-                      child: Text(
-                        "LOGIN",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1,
-                        ),
-                      ),
+                    child: Center(
+                      child: _isLoading
+                          ? const SizedBox(
+                              height: 22,
+                              width: 22,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                          : const Text(
+                              "LOGIN",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1,
+                              ),
+                            ),
                     ),
                   ),
                 ),
 
                 const SizedBox(height: 12),
 
-                /// Register
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -143,7 +175,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  /// Email Field
   Widget _buildEmailField() {
     return TextField(
       controller: emailController,
@@ -152,7 +183,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  /// Password Field with Eye Toggle
   Widget _buildPasswordField() {
     return TextField(
       controller: passwordController,
@@ -176,7 +206,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  /// Common Input Decoration
   InputDecoration _inputDecoration({
     required String hint,
     required IconData icon,
